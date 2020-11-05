@@ -1,0 +1,46 @@
+{
+  "name": "arquero-query",
+  "version": "0.0.1",
+  "description": "Serialized query and worker support for Arquero.",
+  "keywords": [
+    "data",
+    "query",
+    "database",
+    "table",
+    "dataframe",
+    "transform",
+    "arrays"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "dist/arquero-query.js",
+  "module": "src/index.js",
+  "unpkg": "dist/arquero-query.min.js",
+  "jsdelivr": "dist/arquero-query.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwdata/arquero-query.git"
+  },
+  "scripts": {
+    "prebuild": "rimraf dist && mkdir dist",
+    "build": "rollup -c",
+    "lint": "yarn eslint src test --ext .js",
+    "pretest": "rollup -c --config-node-worker",
+    "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' --require esm",
+    "prepublishOnly": "yarn test && yarn lint && yarn build"
+  },
+  "dependencies": {
+    "arquero": "^0.14.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
+    "eslint": "^7.12.1",
+    "esm": "^3.2.25",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.33.1",
+    "rollup-plugin-bundle-size": "1.0.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "tape": "^5.0.1"
+  }
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arquero Web Worker Test</title>
+    <script src="../dist/arquero-query.js"></script>
+  </head>
+  <body>
+
+  </body>
+  <script>
+    // create query worker, providing web worker script
+    const qw = new aq.QueryWorker('../dist/arquero-worker.min.js');
+
+    async function test() {
+      // add a new table named "test" to the worker
+      // the result is a query builder that acts as a proxy to the table
+      // the query builder supports Arquero's table verb API
+      const qb = await qw.table('test', {
+        x: [1, 2, 3],
+        y: [4, 5, 6]
+      });
+
+      // fetch the table content from the web worker
+      // the result is a standard Arquero table
+      const dt = await qb.fetch();
+
+      // specify a query as one or more verbs
+      // process the query on the worker thread
+      // then fetch the results as an Arquero table
+      const rt = await qb
+        .rollup({
+          sx: d => op.sum(d.x),
+          sy: d => op.sum(d.y)
+        })
+        .fetch();
+
+      // get list of table names registered with the worker
+      const list = await qw.list();
+
+      console.log(dt.toJSON());
+      console.log(rt.toJSON());
+      console.log(list);
+    }
+
+    test();
+  </script>
+</html>
