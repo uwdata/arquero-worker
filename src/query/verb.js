@@ -76,6 +76,16 @@ function parseJoinKeys(keys, index) {
   return list;
 }
 
+function joinValues(values) {
+  return isArray(values)
+    ? values.map(parseJoinValues)
+    : values;
+}
+
+function parseJoinValues(values, index) {
+  return index < 2 ? toArray(values) : values;
+}
+
 function orderbyKeys(keys) {
   const list = [];
 
@@ -319,7 +329,7 @@ export class Join extends Verb {
     super('join', Join.params);
     this._table = table;
     this._on = joinKeys(on);
-    this._values = values;
+    this._values = joinValues(values);
     this._options = options;
   }
   evaluate(table, catalog) {
@@ -337,7 +347,7 @@ export class Cross extends Verb {
   constructor(table, values, options) {
     super('cross', Cross.params);
     this._table = table;
-    this._values = values;
+    this._values = joinValues(values);
     this._options = options;
   }
   evaluate(table, catalog) {

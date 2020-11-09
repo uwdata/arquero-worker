@@ -158,8 +158,8 @@ tape('Join verb serializes to object', t => {
         [field('keyR', { index: 1 })]
       ],
       values: [
-        { all: [] },
-        { not: ['keyR'] }
+        [ { all: [] } ],
+        [ { not: ['keyR'] } ]
       ],
       options: { suffix: ['_L', '_R'] }
     },
