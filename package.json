@@ -30,12 +30,12 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
-    "arquero": "^0.14.0"
+    "arquero": "^0.16.0"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
-    "eslint": "^7.12.1",
+    "eslint": "^7.13.0",
     "esm": "^3.2.25",
     "rimraf": "^3.0.2",
     "rollup": "^2.33.1",

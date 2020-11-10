@@ -155,7 +155,7 @@ tape('Join verb serializes to object', t => {
       table: 'tableRef',
       on: [
         [field('keyL')],
-        [field('keyR', { index: 1 })]
+        [field('keyR', { table: 1 })]
       ],
       values: [
         [ { all: [] } ],

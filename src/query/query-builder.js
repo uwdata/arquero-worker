@@ -36,8 +36,8 @@ export default class QueryBuilder {
    * Construct a new QueryBuilder instance.
    */
   constructor(query, params) {
-    this._params = params;
     this._query = query || [];
+    this._params = params;
   }
 
   /**
