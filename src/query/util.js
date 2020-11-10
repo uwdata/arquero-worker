@@ -70,12 +70,12 @@ export function joinKeys(keys) {
     : keys;
 }
 
-function parseJoinKeys(keys, index) {
+function parseJoinKeys(keys) {
   const list = [];
 
   toArray(keys).forEach(param => {
     isNumber(param) ? list.push(param)
-      : isString(param) ? list.push(field(param, null, index))
+      : isString(param) ? list.push(field(param, null))
       : isObject(param) && param.expr ? list.push(param)
       : isFunction(param) ? list.push(param)
       : error(`Invalid key value: ${param+''}`);

@@ -1,8 +1,8 @@
 import tape from 'tape';
 import { all, bin, desc, not, op, range, rolling } from 'arquero';
 import {
-  Count, Dedupe, Derive, Filter, Groupby, Join, Orderby,
-  Pivot, Rollup, Select, Ungroup, Unorder
+  Concat, Count, Dedupe, Derive, Filter, Groupby, Join, Orderby,
+  Pivot, Rollup, Select, Ungroup, Unorder, Verb
 } from '../../src/query/verb';
 
 const func = (expr, props) => ({
@@ -13,9 +13,16 @@ const field = (expr, props) => ({
   expr, field: true, ...props
 });
 
+function test(t, verb, expect, msg) {
+  const object = verb.toObject();
+  t.deepEqual(object, expect, msg);
+  const rt = Verb.from(object).toObject();
+  t.deepEqual(rt, expect, msg + ' round-trip');
+}
+
 tape('Count verb serializes to objects', t => {
-  t.deepEqual(
-    (new Count()).toObject(),
+  test(t,
+    new Count(),
     {
       verb: 'count',
       options: undefined
@@ -23,8 +30,8 @@ tape('Count verb serializes to objects', t => {
     'serialized count, no options'
   );
 
-  t.deepEqual(
-    (new Count({ as: 'cnt' })).toObject(),
+  test(t,
+    new Count({ as: 'cnt' }),
     {
       verb: 'count',
       options: { as: 'cnt' }
@@ -36,8 +43,8 @@ tape('Count verb serializes to objects', t => {
 });
 
 tape('Dedupe verb serializes to objects', t => {
-  t.deepEqual(
-    (new Dedupe()).toObject(),
+  test(t,
+    new Dedupe(),
     {
       verb: 'dedupe',
       keys: []
@@ -45,8 +52,8 @@ tape('Dedupe verb serializes to objects', t => {
     'serialized dedupe, no keys'
   );
 
-  t.deepEqual(
-    (new Dedupe(['id', d => d.foo])).toObject(),
+  test(t,
+    new Dedupe(['id', d => d.foo]),
     {
       verb: 'dedupe',
       keys: [
@@ -67,8 +74,8 @@ tape('Derive verb serializes to object', t => {
     baz: rolling(d => op.mean(d.foo), [-3, 3])
   });
 
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    verb,
     {
       verb: 'derive',
       values: {
@@ -87,10 +94,8 @@ tape('Derive verb serializes to object', t => {
 });
 
 tape('Filter verb serializes to object', t => {
-  const verb = new Filter(d => d.foo > 2);
-
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    new Filter(d => d.foo > 2),
     {
       verb: 'filter',
       criteria: func('d => d.foo > 2')
@@ -107,8 +112,8 @@ tape('Groupby verb serializes to object', t => {
     { baz: d => d.baz, bop: d => d.bop }
   ]);
 
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    verb,
     {
       verb: 'groupby',
       keys: [
@@ -124,8 +129,8 @@ tape('Groupby verb serializes to object', t => {
 
   const binVerb = new Groupby([{ bin0: bin('foo') }]);
 
-  t.deepEqual(
-    binVerb.toObject(),
+  test(t,
+    binVerb,
     {
       verb: 'groupby',
       keys: [
@@ -148,14 +153,14 @@ tape('Join verb serializes to object', t => {
     { suffix: ['_L', '_R'] }
   );
 
-  t.deepEqual(
-    verbSel.toObject(),
+  test(t,
+    verbSel,
     {
       verb: 'join',
       table: 'tableRef',
       on: [
         [field('keyL')],
-        [field('keyR', { table: 1 })]
+        [field('keyR')]
       ],
       values: [
         [ { all: [] } ],
@@ -179,8 +184,8 @@ tape('Join verb serializes to object', t => {
     { suffix: ['_L', '_R'] }
   );
 
-  t.deepEqual(
-    verbCols.toObject(),
+  test(t,
+    verbCols,
     {
       verb: 'join',
       table: 'tableRef',
@@ -207,8 +212,8 @@ tape('Join verb serializes to object', t => {
     }
   );
 
-  t.deepEqual(
-    verbExpr.toObject(),
+  test(t,
+    verbExpr,
     {
       verb: 'join',
       table: 'tableRef',
@@ -235,8 +240,8 @@ tape('Orderby verb serializes to object', t => {
     desc(d => d.bop)
   ]);
 
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    verb,
     {
       verb: 'orderby',
       keys: [
@@ -260,8 +265,8 @@ tape('Pivot verb serializes to object', t => {
     { sort: false }
   );
 
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    verb,
     {
       verb: 'pivot',
       keys: ['key'],
@@ -287,8 +292,8 @@ tape('Rollup verb serializes to object', t => {
     mean: d => op.mean(d.foo)
   });
 
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    verb,
     {
       verb: 'rollup',
       values: {
@@ -313,8 +318,8 @@ tape('Select verb serializes to objects', t => {
     not('foo', 'bar', range(0, 1), range('a', 'b'))
   ]);
 
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    verb,
     {
       verb: 'select',
       columns: [
@@ -340,10 +345,8 @@ tape('Select verb serializes to objects', t => {
 });
 
 tape('Ungroup verb serializes to object', t => {
-  const verb = new Ungroup();
-
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    new Ungroup(),
     { verb: 'ungroup' },
     'serialized ungroup verb'
   );
@@ -352,12 +355,23 @@ tape('Ungroup verb serializes to object', t => {
 });
 
 tape('Unorder verb serializes to object', t => {
-  const verb = new Unorder();
-
-  t.deepEqual(
-    verb.toObject(),
+  test(t,
+    new Unorder(),
     { verb: 'unorder' },
     'serialized unorder verb'
+  );
+
+  t.end();
+});
+
+tape('Concat verb serializes to AST', t => {
+  test(t,
+    new Concat(['foo', 'bar']),
+    {
+      verb: 'concat',
+      tables: ['foo', 'bar']
+    },
+    'serialized rollup concat'
   );
 
   t.end();
