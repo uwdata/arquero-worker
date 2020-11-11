@@ -306,6 +306,7 @@ tape('Select verb serializes to objects', t => {
   const verb = new Select([
     'foo',
     'bar',
+    { bop: 'boo', baz: 'bao' },
     all(),
     range(0, 1),
     range('a', 'b'),
@@ -319,6 +320,7 @@ tape('Select verb serializes to objects', t => {
       columns: [
         'foo',
         'bar',
+        { bop: 'boo', baz: 'bao' },
         { all: [] },
         { range: [0, 1] },
         { range: ['a', 'b'] },

@@ -16,6 +16,7 @@ import {
   JoinValues,
   Options,
   OrderbyKeys,
+  SelectionList,
   TableRef,
   TableRefList
 } from './constants';
@@ -154,7 +155,7 @@ export const Sample = createVerb('sample', [
 ]);
 
 export const Select = createVerb('select', [
-  { name: 'columns', type: ExprList }
+  { name: 'columns', type: SelectionList }
 ]);
 
 export const Ungroup = createVerb('ungroup');

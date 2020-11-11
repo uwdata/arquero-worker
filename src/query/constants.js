@@ -7,5 +7,6 @@ export const JoinKeys = 'JoinKeys';
 export const JoinValues = 'JoinValues';
 export const Options = 'Options';
 export const OrderbyKeys = 'OrderKeys';
+export const SelectionList = 'SelectionList';
 export const TableRef = 'TableRef';
 export const TableRefList = 'TableRefList';

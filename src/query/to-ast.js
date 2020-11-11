@@ -3,7 +3,6 @@ import isArray from '../util/is-array';
 import isNumber from '../util/is-number';
 import isObject from '../util/is-object';
 import isString from '../util/is-string';
-import map from '../util/map-object';
 import toArray from '../util/to-array';
 import { isSelection, toObject } from './util';
 
@@ -17,6 +16,7 @@ import {
   JoinValues,
   Options,
   OrderbyKeys,
+  SelectionList,
   TableRef,
   TableRefList
 } from './constants';
@@ -32,7 +32,8 @@ const Methods = {
   [ExprObject]: astExprObject,
   [JoinKeys]: astJoinKeys,
   [JoinValues]: astJoinValues,
-  [OrderbyKeys]: astExprList
+  [OrderbyKeys]: astExprList,
+  [SelectionList]: astSelectionList
 };
 
 export default function(value, type, propTypes) {
@@ -98,10 +99,11 @@ function astExprObject(obj, opt) {
     }
   }
 
-  return {
-    type: 'Expressions',
-    values: map(obj, val => astExprObject(val, opt))
-  };
+  return Object.keys(obj)
+    .map(key => ({
+      ...astExprObject(obj[key], opt),
+      as: key
+    }));
 }
 
 function astSelection(sel) {
@@ -109,6 +111,19 @@ function astSelection(sel) {
   return sel.all ? { type, operator: 'all' }
     : sel.not ? { type, operator: 'not', arguments: astExprList(sel.not) }
     : sel.range ? { type, operator: 'range', arguments: astExprList(sel.range) }
+    : error('Invalid input');
+}
+
+function astSelectionList(arr) {
+  return toArray(arr).map(astSelectionItem).flat();
+}
+
+function astSelectionItem(val) {
+  return isSelection(val) ? astSelection(val)
+    : isNumber(val) ? astColumnIndex(val)
+    : isString(val) ? astColumn(val)
+    : isObject(val) ? Object.keys(val)
+      .map(name => ({ type: Column, name, as: val[name] }))
     : error('Invalid input');
 }
 
@@ -121,7 +136,7 @@ function astExpr(val) {
 }
 
 function astExprList(arr) {
-  return toArray(arr).map(astExpr);
+  return toArray(arr).map(astExpr).flat();
 }
 
 function astExprNumber(val) {
