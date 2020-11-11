@@ -31,8 +31,8 @@ export default class QueryWorker {
   }
 
   async drop(name) {
-    if (name && name.name) {
-      name = name.name();
+    if (name && name.tableName && !name.length) {
+      name = name.tableName();
     }
     const resp = await this.post({
       method: 'drop',
@@ -60,10 +60,10 @@ export default class QueryWorker {
     return WorkerBuilder.for(resp.table, this);
   }
 
-  async query(name, query, options, as) {
+  async query(query, options, as) {
     const resp = await this.post({
       method: 'query',
-      params: { name, query, as, options }
+      params: { query, as, options }
     });
     return as
       ? WorkerBuilder.for(resp.table, this)

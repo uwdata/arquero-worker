@@ -5,7 +5,7 @@ import isObject from '../util/is-object';
 import isString from '../util/is-string';
 import map from '../util/map-object';
 import toArray from '../util/to-array';
-import { isSelection } from './util';
+import { isSelection, toObject } from './util';
 
 import {
   Column,
@@ -22,6 +22,7 @@ import {
 } from './constants';
 
 import { internal } from 'arquero';
+import isFunction from '../util/is-function';
 const { parse } = internal;
 
 const Methods = {
@@ -31,12 +32,16 @@ const Methods = {
   [ExprObject]: astExprObject,
   [JoinKeys]: astJoinKeys,
   [JoinValues]: astJoinValues,
-  [OrderbyKeys]: astExprList,
-  [TableRef]: d => d,
-  [TableRefList]: d => d
+  [OrderbyKeys]: astExprList
 };
 
-export default function toAST(value, type, propTypes) {
+export default function(value, type, propTypes) {
+  return type === TableRef ? astTableRef(value)
+    : type === TableRefList ? value.map(astTableRef)
+    : ast(toObject(value), type, propTypes);
+}
+
+function ast(value, type, propTypes) {
   return type === Options
     ? (value ? astOptions(value, propTypes) : value)
     : Methods[type](value);
@@ -44,13 +49,11 @@ export default function toAST(value, type, propTypes) {
 
 function astOptions(value, types = {}) {
   const output = {};
-    for (const key in value) {
-      const prop = value[key];
-      output[key] = types[key]
-        ? toAST(prop, types[key])
-        : prop;
-    }
-    return output;
+  for (const key in value) {
+    const prop = value[key];
+    output[key] = types[key] ? ast(prop, types[key]) : prop;
+  }
+  return output;
 }
 
 function astParse(expr, opt) {
@@ -138,4 +141,10 @@ function astJoinValues(val) {
         : astExprObject(v, { join: true })
       )
     : astExprObject(val, { join: true });
+}
+
+function astTableRef(value) {
+  return value && isFunction(value.toAST)
+    ? value.toAST()
+    : value;
 }

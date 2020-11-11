@@ -8,9 +8,8 @@ export default class WorkerBuilder extends QueryBuilder {
   /**
    * Construct a new WorkerTable instance.
    */
-  constructor(query, params, source, worker) {
-    super(query, params);
-    this._source = source;
+  constructor(source, query, params, worker) {
+    super(source, query, params);
     this._worker = worker;
   }
 
@@ -21,15 +20,7 @@ export default class WorkerBuilder extends QueryBuilder {
    * @param {QueryWorker} worker The query worker for processing queries.
    */
   static for(source, worker) {
-    return new WorkerBuilder(null, null, source, worker);
-  }
-
-  /**
-   * Return the name of the table this query applies to.
-   * @return {string} The name of the backing table, or undefined.
-   */
-  name() {
-    return !this._query.length ? this._source : undefined;
+    return new WorkerBuilder(source, null, null, worker);
   }
 
   /**
@@ -39,9 +30,9 @@ export default class WorkerBuilder extends QueryBuilder {
    */
   append(verb) {
     return new WorkerBuilder(
+      this._source,
       this._query.concat(verb),
       this._params,
-      this._source,
       this._worker
     );
   }
@@ -55,7 +46,6 @@ export default class WorkerBuilder extends QueryBuilder {
    */
   fetch(options) {
     return this._worker.query(
-      this._source,
       this.query().toObject(),
       options
     );

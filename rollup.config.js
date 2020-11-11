@@ -3,13 +3,20 @@ import bundleSize from 'rollup-plugin-bundle-size';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 
-const buildAsync = {
+function onwarn(warning, defaultHandler) {
+  if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+    defaultHandler(warning);
+  }
+}
+
+const buildQuery = {
   input: 'src/index.js',
   plugins: [
     json(),
     bundleSize(),
     nodeResolve({ modulesOnly: true })
   ],
+  onwarn,
   output: [
     {
       file: 'dist/arquero-query.js',
@@ -37,6 +44,7 @@ const buildWorker = {
     bundleSize(),
     nodeResolve({ modulesOnly: true })
   ],
+  onwarn,
   output: [
     {
       file: 'dist/arquero-worker.js',
@@ -59,6 +67,7 @@ const buildNodeWorker = {
     bundleSize(),
     nodeResolve({ modulesOnly: true })
   ],
+  onwarn,
   output: [
     {
       file: 'dist/arquero-node-worker.js',
@@ -74,5 +83,5 @@ const buildNodeWorker = {
 export default function(args) {
   const nodeWorker = !!args['config-node-worker'];
   return nodeWorker ? buildNodeWorker
-    : [buildAsync, buildWorker, buildNodeWorker];
+    : [buildQuery, buildWorker, buildNodeWorker];
 }

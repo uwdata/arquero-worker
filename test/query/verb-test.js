@@ -1,17 +1,11 @@
 import tape from 'tape';
 import { all, bin, desc, not, op, range, rolling } from 'arquero';
+import { field, func } from './util';
+import QueryBuilder from '../../src/query/query-builder';
 import {
   Concat, Count, Dedupe, Derive, Filter, Groupby, Join, Orderby,
   Pivot, Rollup, Select, Ungroup, Unorder, Verb
 } from '../../src/query/verb';
-
-const func = (expr, props) => ({
-  expr, func: true, ...props
-});
-
-const field = (expr, props) => ({
-  expr, field: true, ...props
-});
 
 function test(t, verb, expect, msg) {
   const object = verb.toObject();
@@ -364,14 +358,26 @@ tape('Unorder verb serializes to object', t => {
   t.end();
 });
 
-tape('Concat verb serializes to AST', t => {
+tape('Concat verb serializes to object', t => {
   test(t,
     new Concat(['foo', 'bar']),
     {
       verb: 'concat',
       tables: ['foo', 'bar']
     },
-    'serialized rollup concat'
+    'serialized concat verb'
+  );
+
+  const ct1 = new QueryBuilder('foo').select(not('bar'));
+  const ct2 = new QueryBuilder('bar').select(not('foo'));
+
+  test(t,
+    new Concat([ct1, ct2]),
+    {
+      verb: 'concat',
+      tables: [ ct1.toObject(), ct2.toObject() ]
+    },
+    'serialized concat verb, with subqueries'
   );
 
   t.end();

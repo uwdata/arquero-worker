@@ -1,4 +1,5 @@
 import { all, desc, field, not, range, rolling } from 'arquero';
+import Query from './query';
 import error from '../util/error';
 import isArray from '../util/is-array';
 import isFunction from '../util/is-function';
@@ -12,6 +13,13 @@ function func(expr) {
   const f = d => d;
   f.toString = () => expr;
   return f;
+}
+
+export function getTable(catalog, ref) {
+  ref = ref && isFunction(ref.query) ? ref.query() : ref;
+  return ref && isFunction(ref.evaluate)
+    ? ref.evaluate(null, catalog)
+    : catalog(ref);
 }
 
 export function isSelection(value) {
@@ -33,6 +41,7 @@ export function toObject(value) {
 export function fromObject(value) {
   return isArray(value) ? value.map(fromObject)
     : !isObject(value) ? value
+    : isArray(value.verbs) ? Query.from(value)
     : isArray(value.all) ? all()
     : isArray(value.range) ? range(...value.range)
     : isArray(value.not) ? not(value.not.map(toObject))

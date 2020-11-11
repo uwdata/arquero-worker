@@ -32,7 +32,7 @@ export default class Database {
 
   query(name, query) {
     return query.evaluate(
-      this.get(name),
+      name ? this.get(name) : null,
       name => this.get(name)
     );
   }

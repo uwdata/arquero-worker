@@ -35,7 +35,8 @@ export default class QueryBuilder {
   /**
    * Construct a new QueryBuilder instance.
    */
-  constructor(query, params) {
+  constructor(source, query, params) {
+    this._source = source;
     this._query = query || [];
     this._params = params;
   }
@@ -46,7 +47,23 @@ export default class QueryBuilder {
   get [Symbol.toStringTag]() {
     if (!this._names) return 'Object'; // bail if called on prototype
     const ns = this._query.length;
-    return `QueryBuilder: ${ns} verbs`;
+    return `QueryBuilder: ${ns} verbs`
+      + (this._source ? ` on "${this._source}"` : '');
+  }
+
+  /**
+   * Return the number of verbs in the built query.
+   */
+  get length() {
+    return this._query.length;
+  }
+
+  /**
+   * Return the name of the table this query applies to.
+   * @return {string} The name of the source table, or undefined.
+   */
+  tableName() {
+    return this._source;
   }
 
   /**
@@ -56,6 +73,7 @@ export default class QueryBuilder {
    */
   append(verb) {
     return new QueryBuilder(
+      this._source,
       this._query.concat(verb),
       this._params
     );
@@ -66,7 +84,27 @@ export default class QueryBuilder {
    * @return {Query} A constructed query instance.
    */
   query() {
-    return new Query(this._query);
+    return new Query(this._query, this._params, this._source);
+  }
+
+  /**
+   * Serialize the query as a JSON-compatible object.
+   * @returns {object} A JSON-compatible object representing the query.
+   */
+  toObject() {
+    return this.query().toObject();
+  }
+
+  /**
+   * Serialize the query to a JSON-compatible abstract syntax tree.
+   * All table expressions will be parsed and represented as AST instances
+   * using a modified form of the Mozilla JavaScript AST format.
+   * This method can be used to output parsed and serialized representations
+   * to translate Arquero queries to alternative data processing platforms.
+   * @returns {object} A JSON-compatible abstract syntax tree object.
+   */
+  toAST() {
+    return this.query().toAST();
   }
 
   /**

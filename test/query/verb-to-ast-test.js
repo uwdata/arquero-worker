@@ -1,5 +1,6 @@
 import tape from 'tape';
 import { all, bin, desc, not, op, range, rolling } from 'arquero';
+import QueryBuilder from '../../src/query/query-builder';
 import {
   Concat, Count, Dedupe, Derive, Filter, Groupby, Join, Orderby,
   Pivot, Reify, Rollup, Sample, Select, Ungroup, Unorder, Unroll
@@ -683,7 +684,19 @@ tape('Concat verb serializes to AST', t => {
       verb: 'concat',
       tables: ['foo', 'bar']
     },
-    'ast rollup concat'
+    'ast concat verb'
+  );
+
+  const ct1 = new QueryBuilder('foo').select(not('bar'));
+  const ct2 = new QueryBuilder('bar').select(not('foo'));
+
+  t.deepEqual(
+    toAST(new Concat([ct1, ct2])),
+    {
+      verb: 'concat',
+      tables: [ ct1.toAST(), ct2.toAST() ]
+    },
+    'ast concat verb, with subqueries'
   );
 
   t.end();

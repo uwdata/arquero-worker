@@ -83,8 +83,8 @@ async function onLoad({ name, append, url, type, options }) {
 // name: string
 // query: serialized Query
 // as: string
-function onQuery({ name, query, as, options }) {
-  const dt = db.query(name, Query.from(query));
+function onQuery({ query, as, options }) {
+  const dt = db.query(query.name, Query.from(query));
   return as ? insert(as, dt) : transfer(dt, options);
 }
 

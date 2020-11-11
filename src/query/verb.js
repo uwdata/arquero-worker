@@ -1,5 +1,6 @@
 import {
   fromObject,
+  getTable,
   joinKeys,
   joinValues,
   orderbyKeys,
@@ -69,8 +70,8 @@ export class Verb {
   evaluate(table, catalog) {
     const params = this.schema.map(({ name, type }) => {
       const value = this[name];
-      return type === TableRef ? catalog(value)
-        : type === TableRefList ? value.map(catalog)
+      return type === TableRef ? getTable(catalog, value)
+        : type === TableRefList ? value.map(t => getTable(catalog, t))
         : value;
     });
     return table[this.verb](...params);
@@ -100,7 +101,7 @@ export class Verb {
   toAST() {
     const obj = { verb: this.verb };
     this.schema.forEach(({ name, type, props }) => {
-      obj[name] = toAST(toObject(this[name]), type, props);
+      obj[name] = toAST(this[name], type, props);
     });
     return obj;
   }

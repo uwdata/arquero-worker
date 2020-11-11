@@ -2,20 +2,14 @@ import tape from 'tape';
 import { all, desc, not, op, range, rolling, seed, table } from 'arquero';
 import groupbyEqual from '../groupby-equal';
 import tableEqual from '../table-equal';
+import { field, func } from './util';
 import Query from '../../src/query/query';
 import {
   Antijoin, Concat, Count, Cross, Dedupe, Derive, Except, Filter, Fold,
   Groupby, Intersect, Join, Orderby, Pivot, Rollup, Sample, Select,
   Semijoin, Spread, Union, Unroll
 } from '../../src/query/verb';
-
-const func = (expr, props) => ({
-  expr, func: true, ...props
-});
-
-const field = (expr, props) => ({
-  expr, field: true, ...props
-});
+import QueryBuilder from '../../src/query/query-builder';
 
 tape('Query serializes to objects', t => {
   const q = new Query([
@@ -854,6 +848,34 @@ tape('Query evaluates concat verbs', t => {
     t,
     Query.from(
       new Query([ new Concat(['other']) ]).toObject()
+    ).evaluate(lt, catalog),
+    { x: ['A', 'B', 'B', 'C'], y: [1, 2, 2, 3] },
+    'concat query result'
+  );
+
+  t.end();
+});
+
+tape('Query evaluates concat verbs with subqueries', t => {
+  const lt = table({
+    x: ['A', 'B'],
+    y: [1, 2]
+  });
+
+  const rt = table({
+    a: ['B', 'C'],
+    b: [2, 3]
+  });
+
+  const catalog = name => name === 'other' ? rt : null;
+
+  const sub = new QueryBuilder('other')
+    .select({ a: 'x', b: 'y' });
+
+  tableEqual(
+    t,
+    Query.from(
+      new Query([ new Concat([sub]) ]).toObject()
     ).evaluate(lt, catalog),
     { x: ['A', 'B', 'B', 'C'], y: [1, 2, 2, 3] },
     'concat query result'
