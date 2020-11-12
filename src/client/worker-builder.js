@@ -1,4 +1,5 @@
-import QueryBuilder from '../query/query-builder';
+import { internal } from 'arquero';
+const { QueryBuilder } = internal;
 
 /**
  * Query builder interface for web workers.
@@ -30,8 +31,8 @@ export default class WorkerBuilder extends QueryBuilder {
    */
   append(verb) {
     return new WorkerBuilder(
-      this._source,
-      this._query.concat(verb),
+      this._table,
+      this._verbs.concat(verb),
       this._params,
       this._worker
     );
@@ -45,9 +46,6 @@ export default class WorkerBuilder extends QueryBuilder {
    * @return {Promise} A Promise for the query results.
    */
   fetch(options) {
-    return this._worker.query(
-      this.query().toObject(),
-      options
-    );
+    return this._worker.query(this.toObject(), options);
   }
 }

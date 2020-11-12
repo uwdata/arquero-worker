@@ -19,19 +19,19 @@ const buildQuery = {
   onwarn,
   output: [
     {
-      file: 'dist/arquero-query.js',
+      file: 'dist/arquero-worker-client.js',
       name: 'aq',
       format: 'umd'
     },
     {
-      file: 'dist/arquero-query.min.js',
+      file: 'dist/arquero-worker-client.min.js',
       name: 'aq',
       format: 'umd',
       sourcemap: true,
       plugins: [ terser({ ecma: 2018 }) ]
     },
     {
-      file: 'dist/arquero-query.mjs',
+      file: 'dist/arquero-worker-client.mjs',
       format: 'es'
     }
   ]

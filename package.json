@@ -1,7 +1,7 @@
 {
-  "name": "arquero-query",
+  "name": "arquero-worker",
   "version": "0.0.1",
-  "description": "Serialized query and worker support for Arquero.",
+  "description": "Worker thread support for Arquero.",
   "keywords": [
     "data",
     "query",
@@ -13,13 +13,13 @@
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "dist/arquero-query.js",
+  "main": "dist/arquero-worker-client.js",
   "module": "src/index.js",
-  "unpkg": "dist/arquero-query.min.js",
-  "jsdelivr": "dist/arquero-query.min.js",
+  "unpkg": "dist/arquero-worker-client.min.js",
+  "jsdelivr": "dist/arquero-worker-client.min.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/arquero-query.git"
+    "url": "https://github.com/uwdata/arquero-worker.git"
   },
   "scripts": {
     "prebuild": "rimraf dist && mkdir dist",
@@ -30,7 +30,7 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
-    "arquero": "^0.16.0"
+    "arquero": "^0.17.0"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",

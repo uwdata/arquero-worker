@@ -33,7 +33,7 @@ export default function(source) {
     worker = new Worker(source || DEFAULT_SOURCE());
     worker.on('message', data => onMessage(data, requests));
   } else {
-    // use web worker api
+    // use web worker API
     worker = new Worker(source);
     worker.onmessage = event => onMessage(event.data, requests);
   }

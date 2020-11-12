@@ -1,5 +1,8 @@
 import { fromArrow, fromCSV, fromJSON } from 'arquero';
-import error from '../util/error';
+
+function error(message) {
+  throw Error(message);
+}
 
 export default function(type, url, options) {
   switch (type) {

@@ -1,5 +1,4 @@
-import { from, seed as setSeed, table } from 'arquero';
-import Query from '../query/query';
+import { from, queryFrom, seed as setSeed, table } from 'arquero';
 import Database from './database';
 import load from './load';
 
@@ -84,7 +83,7 @@ async function onLoad({ name, append, url, type, options }) {
 // query: serialized Query
 // as: string
 function onQuery({ query, as, options }) {
-  const dt = db.query(query.name, Query.from(query));
+  const dt = db.query(query.name, queryFrom(query));
   return as ? insert(as, dt) : transfer(dt, options);
 }
 

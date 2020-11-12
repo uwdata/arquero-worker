@@ -2,14 +2,14 @@
 <html>
   <head>
     <title>Arquero Web Worker Test</title>
-    <script src="../dist/arquero-query.js"></script>
+    <script src="../dist/arquero-worker-client.js"></script>
   </head>
   <body>
 
   </body>
   <script>
     // create query worker, providing web worker script
-    const qw = new aq.QueryWorker('../dist/arquero-worker.min.js');
+    const qw = new aq.worker('../dist/arquero-worker.min.js');
 
     async function test() {
       // add a new table named "test" to the worker
