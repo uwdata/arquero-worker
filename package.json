@@ -30,7 +30,7 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
-    "arquero": "^0.17.0"
+    "arquero": "^0.17.1"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",

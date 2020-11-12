@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arquero Web Worker Example</title>
+    <script src="../arquero-worker-client.min.js"></script>
+    <style>
+      * {
+        font-family: Helvetica Neue, Arial, sans-serif;
+      }
+      td, th {
+        font-size: 10pt;
+        padding: 0 4px;
+      }
+      th {
+        font-weight: 500;
+        border-bottom: 1px solid #888;
+      }
+      h1 {
+        font-size: 18pt;
+        font-weight: 600
+      }
+      h2 {
+        font-size: 11pt;
+        font-weight: 500;
+        margin-bottom: 0.5em;
+      }
+      .block {
+        border-top: 1px solid #ddd;
+        margin-bottom: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Arquero Web Worker Example</h1>
+    <p>
+      Uses the <a href="https://github.com/uwdata/arquero-worker/">arquero-worker</a> library to process data on a worker thread.
+      View the page source to see the example code.
+    </p>
+    <p>
+      This example page uses a dataset of beers and a corresponding dataset of breweries.
+      For more about the data, see the <a href="https://observablehq.com/@uwdata/introducing-arquero">Introducing Arquero</a> notebook.
+    </p>
+    <div class="block">
+      <h2>The first 20 beers with the word "hop" in their name:</h2>
+      <div id="hops"></div>
+    </div>
+    <div class="block">
+      <h2>The count of breweries that appear in the beers data:</h2>
+      <div id="included"></div>
+    </div>
+    <div class="block">
+      <h2>The count of breweries that do NOT appear in the beers data:</h2>
+      <div id="excluded"></div>
+    </div>
+  </body>
+  <script>
+    // create query worker, providing web worker script
+    const qw = new aq.worker('../arquero-worker.min.js');
+    const op = aq.op;
+
+    // run example
+    (async function run() {
+      // load datasets into worker thread
+      // group with Promise.all to load in parallel
+      // data URLs are relative to the worker source!
+      const [ beers, breweries ] = await Promise.all([
+        qw.load('beers', 'data/beers.csv'),
+        qw.load('breweries', 'data/breweries.csv')
+      ]);
+
+      // filter the beers data in the worker
+      // then fetch the first 20 rows
+      const hops = await beers
+        .filter(d => op.match(/hop/i, d.name))
+        .select('name', 'abv', 'ibu')
+        .orderby('name')
+        .fetch({ limit: 20 });
+
+      // display the fetched rows
+      document.querySelector('#hops').innerHTML = hops.toHTML();
+
+      // count the distinct breweries that appear in the beers data
+      // process in worker and then fetch the result
+      const included = await breweries
+        .semijoin(beers)
+        .count()
+        .fetch();
+
+      // display the fetched result
+      document.querySelector('#included').innerHTML = included.toHTML();
+
+      // count the distinct breweries that do NOT appear in the beers data
+      // process in worker and then fetch the result
+      const excluded = await breweries
+        .antijoin(beers)
+        .count()
+        .fetch();
+
+      // display the fetched result
+      document.querySelector('#excluded').innerHTML = excluded.toHTML();
+    })();
+  </script>
+</html>

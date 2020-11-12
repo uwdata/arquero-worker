@@ -155,10 +155,10 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-arquero@^0.17.0:
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/arquero/-/arquero-0.17.0.tgz#60294c8e79c5b7bbce9ae287205d2dde0521d3df"
-  integrity sha512-V4jo6OfPDPjkbWTSJnFUvAbo8y6CWblPGLjnXOGCFpNWK600rNT1j2a9gh3votjuUwQ9GJu7k9IeeRWPgjd/1Q==
+arquero@^0.17.1:
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/arquero/-/arquero-0.17.1.tgz#30627803ee14ff78465e369e276001b2d66ad24d"
+  integrity sha512-0x8BYLR9ZrhHDznCMRMnL4xa9eAMAA6EUB+Lnv3/nRx6eAit3e6Cq97ebyaQiF3aJD5LrtLjtJUIBALkJm/WOA==
   dependencies:
     acorn "^8.0.4"
 
