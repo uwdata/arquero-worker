@@ -33,11 +33,11 @@
   <body>
     <h1>Arquero Web Worker Example</h1>
     <p>
-      Uses the <a href="https://github.com/uwdata/arquero-worker/">arquero-worker</a> library to process data on a worker thread.
-      View the page source to see the example code.
+      Uses the <a href="https://github.com/uwdata/arquero-worker/">arquero-worker</a> library to process data on a worker thread.<br/>
+      View the <a href="https://github.com/uwdata/arquero-query/blob/main/docs/example/index.html">page source</a> to see the example code.
     </p>
     <p>
-      This example page uses a dataset of beers and a corresponding dataset of breweries.
+      This example uses a dataset of beers and a corresponding dataset of breweries.<br/>
       For more about the data, see the <a href="https://observablehq.com/@uwdata/introducing-arquero">Introducing Arquero</a> notebook.
     </p>
     <div class="block">
@@ -55,7 +55,7 @@
   </body>
   <script>
     // create query worker, providing web worker script
-    const qw = new aq.worker('../arquero-worker.min.js');
+    const qw = aq.worker('../arquero-worker.min.js');
     const op = aq.op;
 
     // run example
@@ -63,13 +63,14 @@
       // load datasets into worker thread
       // group with Promise.all to load in parallel
       // data URLs are relative to the worker source!
+      // returns query builders with table verb API
       const [ beers, breweries ] = await Promise.all([
         qw.load('beers', 'data/beers.csv'),
         qw.load('breweries', 'data/breweries.csv')
       ]);
 
-      // filter the beers data in the worker
-      // then fetch the first 20 rows
+      // build a query for beers with the word 'hop' in their name
+      // fetch the first 20 rows: query is processed on worker thread
       const hops = await beers
         .filter(d => op.match(/hop/i, d.name))
         .select('name', 'abv', 'ibu')
@@ -80,7 +81,7 @@
       document.querySelector('#hops').innerHTML = hops.toHTML();
 
       // count the distinct breweries that appear in the beers data
-      // process in worker and then fetch the result
+      // process on worker thread and then fetch the result
       const included = await breweries
         .semijoin(beers)
         .count()
@@ -90,7 +91,7 @@
       document.querySelector('#included').innerHTML = included.toHTML();
 
       // count the distinct breweries that do NOT appear in the beers data
-      // process in worker and then fetch the result
+      // process on worker thread and then fetch the result
       const excluded = await breweries
         .antijoin(beers)
         .count()

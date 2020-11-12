@@ -6,7 +6,7 @@ A proof-of-concept implementation of worker thread support for [Arquero](https:/
 
 ```js
 // create query worker, providing web worker script
-const qw = new aq.worker('./arquero-worker.min.js');
+const qw = aq.worker('./arquero-worker.min.js');
 
 // load dataset into worker thread
 // return value is a query builder with a table verb API
