@@ -29,9 +29,8 @@ async function loadJSON(url, options) {
 
 async function loadArrow(url, options) {
   if (typeof Arrow !== 'undefined') {
-    const buf = await fetch(url).then(res => res.arrayBuffer());
     // eslint-disable-next-line no-undef
-    const table = Arrow.Table.from([new Uint8Array(buf)]);
+    const table = await Arrow.Table.from(fetch(url));
     return fromArrow(table, options);
   } else {
     error('Apache Arrow has not been imported.');

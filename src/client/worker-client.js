@@ -1,8 +1,8 @@
-import WorkerBuilder from './worker-builder';
+import WorkerQuery from './worker-query';
 import workerThread from './worker-thread';
 import { fromJSON } from 'arquero';
 
-export default class QueryWorker {
+export default class WorkerClient {
   constructor(workerSource) {
     this._worker = workerThread(workerSource);
   }
@@ -49,7 +49,7 @@ export default class QueryWorker {
       });
       name = resp.table;
     }
-    return WorkerBuilder.for(name, this);
+    return WorkerQuery.for(name, this);
   }
 
   async load(name, url, type = 'csv', options = {}, append = false) {
@@ -57,7 +57,7 @@ export default class QueryWorker {
       method: 'load',
       params: { name, url, type, options, append }
     });
-    return WorkerBuilder.for(resp.table, this);
+    return WorkerQuery.for(resp.table, this);
   }
 
   async query(query, options, as) {
@@ -66,7 +66,7 @@ export default class QueryWorker {
       params: { query, as, options }
     });
     return as
-      ? WorkerBuilder.for(resp.table, this)
+      ? WorkerQuery.for(resp.table, this)
       : fromJSON(resp.data);
   }
 

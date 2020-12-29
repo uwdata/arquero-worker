@@ -1,11 +1,11 @@
 import tape from 'tape';
 import tableEqual from '../table-equal';
-import QueryWorker from '../../src/client/query-worker';
+import WorkerClient from '../../src/client/worker-client';
 
 const SOURCE = './dist/arquero-node-worker.js';
 
 tape('Worker thread processes queries', async t => {
-  const worker = new QueryWorker(SOURCE);
+  const worker = new WorkerClient(SOURCE);
 
   const q = await worker.table('test', {
     x: [1, 2, 3],
