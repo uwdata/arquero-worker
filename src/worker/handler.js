@@ -91,14 +91,14 @@ function onAdd({ name, append, data }) {
 
 // load table into catalog
 // name: string
-// type: enum(csv, json, arrow)
 // append: boolean
+// format: enum(csv, json, arrow)
 // options: object
 //   arrow: { columns, unpack }
 //   csv: { delimiter, header, autoType, parse? }
 //   json: { autoType, parse? }
-async function onLoad({ name, append, url, type, options }) {
-  const dt = await load(type, url, options);
+async function onLoad({ name, append, url, format, options }) {
+  const dt = await load(format, url, options);
   return insert(name, dt, append);
 }
 

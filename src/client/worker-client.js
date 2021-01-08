@@ -55,10 +55,10 @@ export default class WorkerClient {
     return WorkerQuery.for(name, this);
   }
 
-  async load(name, url, type = 'csv', options = {}, append = false) {
+  async load(name, url, format = 'csv', options = {}, append = false) {
     const resp = await this.post({
       method: 'load',
-      params: { name, url, type, options, append }
+      params: { name, url, format, options, append }
     });
     return WorkerQuery.for(resp.table, this);
   }

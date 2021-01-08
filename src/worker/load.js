@@ -1,11 +1,12 @@
+import { Table } from 'apache-arrow';
 import { fromArrow, fromCSV, fromJSON } from 'arquero';
 
 function error(message) {
   throw Error(message);
 }
 
-export default function(type, url, options) {
-  switch (type) {
+export default function(format, url, options) {
+  switch (format) {
     case 'csv':
       return loadCSV(url, options);
     case 'json':
@@ -13,7 +14,7 @@ export default function(type, url, options) {
     case 'arrow':
       return loadArrow(url, options);
     default:
-      error(`Unrecognized file type: "${type}"`);
+      error(`Unsupported file format: ${JSON.stringify(format)}`);
   }
 }
 
@@ -28,11 +29,6 @@ async function loadJSON(url, options) {
 }
 
 async function loadArrow(url, options) {
-  if (typeof Arrow !== 'undefined') {
-    // eslint-disable-next-line no-undef
-    const table = await Arrow.Table.from(fetch(url));
-    return fromArrow(table, options);
-  } else {
-    error('Apache Arrow has not been imported.');
-  }
+  const table = await Table.from(fetch(url));
+  return fromArrow(table, options);
 }
