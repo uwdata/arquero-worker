@@ -1,4 +1,6 @@
-import { from, queryFrom, seed as setSeed, table } from 'arquero';
+import { Table } from 'apache-arrow';
+import { from, fromArrow, fromJSON, queryFrom, seed as setSeed, table } from 'arquero';
+import { toArrow } from 'arquero-arrow';
 import Database from './database';
 import load from './load';
 
@@ -7,7 +9,11 @@ export async function handleMessage(request, response) {
   if (handlers.has(method)) {
     try {
       const handler = handlers.get(method);
-      response.send(await handler(params));
+      const message = await handler(params);
+      const trans = ArrayBuffer.isView(message.data)
+        ? [message.data.buffer]
+        : null;
+      response.send(message, trans);
     } catch (err) {
       response.error(err);
     }
@@ -27,6 +33,25 @@ const handlers = new Map()
   .set('query', onQuery)
   .set('seed',  onSeed);
 
+function decodeTable(data) {
+  const type = typeof data;
+  return ArrayBuffer.isView(data) ? fromArrow(Table.from(data))
+    : Array.isArray(data) ? from(data)
+    : type === 'string' ? fromJSON(data)
+    : table(data);
+}
+
+// options: limit, offset, columns, format
+function encodeTable(table, format, options = {}) {
+  switch (format) {
+    case 'arrow':
+      return toArrow(table).serialize(); // TODO handle options
+    case 'json':
+    default:
+      return table.toJSON(options);
+  }
+}
+
 function insert(name, dt, append = false) {
   if (append) {
     db.append(name, dt);
@@ -36,8 +61,8 @@ function insert(name, dt, append = false) {
   return { type: 'table', table: name };
 }
 
-function transfer(dt, options) {
-  return { type: 'data', data: dt.toJSON(options) };
+function transfer(dt, format, options) {
+  return { type: 'data', data: encodeTable(dt, format, options) };
 }
 
 function onSeed({ seed }) {
@@ -57,11 +82,10 @@ function onDrop({ name }) {
 
 // add table to catalog
 // name: string
-// type: enum(columns, rows)
 // append: boolean
 // data: any
-function onAdd({ name, type, append, data }) {
-  const dt = type === 'rows' ? from(data) : table(data);
+function onAdd({ name, append, data }) {
+  const dt = decodeTable(data);
   return insert(name, dt, append);
 }
 
@@ -82,17 +106,15 @@ async function onLoad({ name, append, url, type, options }) {
 // name: string
 // query: serialized Query
 // as: string
-function onQuery({ query, as, options }) {
+function onQuery({ query, as, format, options }) {
   const dt = db.query(query.name, queryFrom(query));
-  return as ? insert(as, dt) : transfer(dt, options);
+  return as ? insert(as, dt) : transfer(dt, format, options);
 }
 
 // fetch table data
 // name: string
 // columns: select-compatible
-// rows: array or boolean
-// type: enum(columns, rows)
-function onFetch({ name, options }) {
+function onFetch({ name, format, options }) {
   const dt = db.get(name);
-  return transfer(dt, options);
+  return transfer(dt, format, options);
 }

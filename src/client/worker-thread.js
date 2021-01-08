@@ -38,9 +38,9 @@ export default function(source) {
     worker.onmessage = event => onMessage(event.data, requests);
   }
 
-  worker.post = data => {
+  worker.post = (data, transfer) => {
     const id = ++REQUEST_ID;
-    worker.postMessage({ id, ...data });
+    worker.postMessage({ id, ...data }, transfer);
     return new Promise((resolve, reject) => {
       // TODO: handle timeout?
       requests.set(id, { resolve, reject });

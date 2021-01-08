@@ -4,7 +4,6 @@ import { handleMessage } from './handler';
 const { parentPort } = require('worker_threads');
 
 parentPort.on('message', request => {
-  // const request = event.data;
   handleMessage(request, response(request));
 });
 

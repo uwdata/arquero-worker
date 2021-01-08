@@ -1,6 +1,7 @@
 import WorkerClient from './client/worker-client';
 
 export * from 'arquero';
-export function worker(source) {
-  return new WorkerClient(source);
+export * from 'arquero-arrow';
+export function worker(source, options) {
+  return new WorkerClient(source, options);
 }

@@ -13,12 +13,12 @@ const qw = aq.worker('./arquero-worker.min.js');
 const beers = await qw.load('beers', 'data/beers.csv');
 
 // build a query for beers with the word 'hop' in their name
-// fetch the first 20 rows: query is processed on worker thread
+// fetch the data, query is processed on worker thread
 const hops = await beers
   .filter(d => op.match(d.name, /hop/i))
   .select('name', 'abv', 'ibu')
   .orderby('name')
-  .fetch({ limit: 20 });
+  .fetch();
 
 // print the fetched rows to the console
 hops.print();

@@ -55,7 +55,7 @@
   </body>
   <script>
     // create query worker, providing web worker script
-    const qw = aq.worker('../arquero-worker.min.js');
+    const qw = aq.worker('../arquero-worker.min.js', { format: 'arrow' });
     const op = aq.op;
 
     // run example
@@ -70,15 +70,15 @@
       ]);
 
       // build a query for beers with the word 'hop' in their name
-      // fetch the first 20 rows: query is processed on worker thread
+      // query is processed on worker thread
       const hops = await beers
         .filter(d => op.match(d.name, /hop/i))
         .select('name', 'abv', 'ibu')
         .orderby('name')
-        .fetch({ limit: 20 });
+        .fetch();
 
-      // display the fetched rows
-      document.querySelector('#hops').innerHTML = hops.toHTML();
+      // display the first 20 fetched rows
+      document.querySelector('#hops').innerHTML = hops.toHTML({ limit: 20 });
 
       // count the distinct breweries that appear in the beers data
       // process on worker thread and then fetch the result

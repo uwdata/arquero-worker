@@ -24,23 +24,25 @@
   "scripts": {
     "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c",
+    "build:docs": "cp dist/arquero-worker-client.min.js* dist/arquero-worker.min.js* docs/",
     "lint": "yarn eslint src test --ext .js",
     "pretest": "rollup -c --config-node-worker",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' --require esm",
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
-    "arquero": "^2.0.0"
+    "arquero": "^2.1.0",
+    "arquero-arrow": "^0.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
-    "eslint": "^7.16.0",
+    "eslint": "^7.17.0",
     "esm": "^3.2.25",
     "rimraf": "^3.0.2",
-    "rollup": "^2.35.1",
+    "rollup": "^2.36.1",
     "rollup-plugin-bundle-size": "1.0.3",
     "rollup-plugin-terser": "^7.0.2",
-    "tape": "^5.0.1"
+    "tape": "^5.1.1"
   }
 }

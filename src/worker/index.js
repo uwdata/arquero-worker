@@ -20,12 +20,12 @@ const response = req => {
         error: err && err.message || String(err)
       });
     },
-    send(result) {
+    send(result, transfer) {
       postMessage({
         status: RESULT,
         request,
         result
-      });
+      }, transfer);
     }
   };
 };
