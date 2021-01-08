@@ -199,17 +199,17 @@ argv-tools@^0.1.1:
     array-back "^2.0.0"
     find-replace "^2.0.1"
 
-arquero-arrow@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/arquero-arrow/-/arquero-arrow-0.0.1.tgz#0b30947c89c70f0461412de865127d00dc2f36d6"
-  integrity sha512-WLhK1MOnZLv6M9UOTe1rmQ4GgZREbWsmdSMTDBK/0la9xdBQTrhxm1RtpMBp1PpSJQoE2yBo7fXHLIC71EiCJw==
+arquero-arrow@^0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/arquero-arrow/-/arquero-arrow-0.1.1.tgz#41650b7c8ab9c24b906204ec4880197506d8dbfa"
+  integrity sha512-J4yvngwBB427JzyjnMDjOg1UgwHKTU2pmaOh26ooBKpmTtNwO9C2GFQ/VCEMsDIX4jkKO7HMQMZicrlKwxn75w==
   dependencies:
     apache-arrow "2.0.0"
 
-arquero@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/arquero/-/arquero-2.1.0.tgz#68222edec687cb40594bc8f7d84fa17913f41f35"
-  integrity sha512-agL18DrU7VJLIotcNq+7kpRuYOPtXamxbiuurOkq14MXFbtd+PY8lmFUPFz11R9uhWTNP2UUJ272Flp/x6lR+A==
+arquero@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/arquero/-/arquero-2.1.1.tgz#86ba7cf7fb7575d459dc482afa26208779d7db05"
+  integrity sha512-44NOHS4mluYutv8nwvPa0TCXUZ+hQVhOWZh5yC/SyYpzZax5FYd9DSSwnyvUhNjEPkYUhiFufNiieoe6GEKrRw==
   dependencies:
     acorn "^8.0.4"
 

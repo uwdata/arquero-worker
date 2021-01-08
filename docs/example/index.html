@@ -70,15 +70,15 @@
       ]);
 
       // build a query for beers with the word 'hop' in their name
-      // query is processed on worker thread
+      // fetch first 20 rows, query is processed on worker thread
       const hops = await beers
         .filter(d => op.match(d.name, /hop/i))
         .select('name', 'abv', 'ibu')
         .orderby('name')
-        .fetch();
+        .fetch({ limit: 20 });
 
-      // display the first 20 fetched rows
-      document.querySelector('#hops').innerHTML = hops.toHTML({ limit: 20 });
+      // display the fetched rows
+      document.querySelector('#hops').innerHTML = hops.toHTML();
 
       // count the distinct breweries that appear in the beers data
       // process on worker thread and then fetch the result

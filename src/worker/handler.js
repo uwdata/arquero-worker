@@ -45,7 +45,7 @@ function decodeTable(data) {
 function encodeTable(table, format, options = {}) {
   switch (format) {
     case 'arrow':
-      return toArrow(table).serialize(); // TODO handle options
+      return toArrow(table, options).serialize(); // TODO handle options
     case 'json':
     default:
       return table.toJSON(options);

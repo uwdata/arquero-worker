@@ -31,8 +31,8 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "dependencies": {
-    "arquero": "^2.1.0",
-    "arquero-arrow": "^0.0.1"
+    "arquero": "^2.1.1",
+    "arquero-arrow": "^0.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
