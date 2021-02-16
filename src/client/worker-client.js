@@ -1,4 +1,3 @@
-import { Table } from 'apache-arrow';
 import { fromArrow, fromJSON } from 'arquero';
 import WorkerQuery from './worker-query';
 import workerThread from './worker-thread';
@@ -85,7 +84,7 @@ export default class WorkerClient {
 }
 
 function decodeTable(data) {
-  return ArrayBuffer.isView(data) ? fromArrow(Table.from(data), { unpack: true })
+  return ArrayBuffer.isView(data) ? fromArrow(data)
     : typeof data === 'string' ? fromJSON(data)
     : error('Unrecognized table data format');
 }

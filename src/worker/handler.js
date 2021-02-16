@@ -1,6 +1,4 @@
-import { Table } from 'apache-arrow';
 import { from, fromArrow, fromJSON, queryFrom, seed as setSeed, table } from 'arquero';
-import { toArrow } from 'arquero-arrow';
 import Database from './database';
 import load from './load';
 
@@ -35,7 +33,7 @@ const handlers = new Map()
 
 function decodeTable(data) {
   const type = typeof data;
-  return ArrayBuffer.isView(data) ? fromArrow(Table.from(data))
+  return ArrayBuffer.isView(data) ? fromArrow(data)
     : Array.isArray(data) ? from(data)
     : type === 'string' ? fromJSON(data)
     : table(data);
@@ -45,7 +43,7 @@ function decodeTable(data) {
 function encodeTable(table, format, options = {}) {
   switch (format) {
     case 'arrow':
-      return toArrow(table, options).serialize(); // TODO handle options
+      return table.toArrowBuffer(options);
     case 'json':
     default:
       return table.toJSON(options);

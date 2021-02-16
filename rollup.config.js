@@ -14,7 +14,7 @@ const buildQuery = {
   plugins: [
     json(),
     bundleSize(),
-    nodeResolve({ modulesOnly: true })
+    nodeResolve({ browser: true, modulesOnly: true })
   ],
   onwarn,
   output: [
@@ -42,7 +42,7 @@ const buildWorker = {
   plugins: [
     json(),
     bundleSize(),
-    nodeResolve({ modulesOnly: true })
+    nodeResolve({ browser: true, modulesOnly: true })
   ],
   onwarn,
   output: [
